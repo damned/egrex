@@ -1,0 +1,7 @@
+require 'isolate/now'
+
+task :default => :not_much
+
+task :not_much do
+  puts 'not doing much'
+end
