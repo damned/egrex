@@ -1,0 +1,112 @@
+<html>
+	<head>
+		<title>/regex/.die!</title>
+		<script type="text/javascript" src="jquery-1.6.3.js"></script>
+		<link type="text/css" href="egrex-pres.css" rel="stylesheet"/>
+	</head>
+	<body style="font-family: courier new">
+	        <span class="internal" id="reminder_mins">10</span>
+	        <span class="internal" id="show_opening_message_yes_or_no">no</span>
+		<div class="slide">
+			<h1>/regex/.die!</h1>
+			<p>dan moore, dev</p>
+		</div>
+		<div class="slide">
+			<h1>this talk<span class="note"></span></h1>
+			<ul class="reveal">
+				<li>vent spleen</li>
+                <li>catharsis</li>
+				<li>why?</li>
+				<li>how?</li>
+				<li>what?</li>
+			</ul>
+		</div>
+        <div class="slide">
+			<h1>kill regex? why?</h1>
+			<ul class="reveal">
+				<li>straw poll</li>
+                <li>examples</li>
+			</ul>
+		</div>
+        <div class="slide">
+			<h1>kill regex? why? (cont)</h1>
+			<ul class="reveal">
+				<li>Q: So what is?<br><code>/^\d{3}-?\d{2}-?\d{4}$/</code></li>
+                <li>A: US social security number parsing, e.g. <code>123-456-789</code></li>
+			</ul>
+		</div>
+        <div class="slide">
+            <h1>kill regex? why? (cont)</h1>
+            <ul class="reveal">
+                <li>Q: Ok, so what is?<br><code>/^(1[-\s.])?(\()?\d{3}(\))?[-\s.]?\d{3}[-\s.]?\d{4}$/</code></li>
+                <li>A: US phone number parsing, e.g. <code>1-(123)-555-6789</code></li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h1>kill regex? why? (cont)</h1>
+            <ul class="reveal">
+                <li>Q: Ok, how about the classic?<br><code>/^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/</code></li>
+                <li>A: email address parsing, e.g. [you get the idea...]</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h1>why? (summary)</h1>
+            <ul class="reveal">
+                <li>why not? i hate it :(</li>
+                <li>ugly</li>
+                <li>opaque</li>
+                <li>error-prone</li>
+                <li>refactor-resistant</li>
+                <li>contrary to all we hold dear</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h1>how?</h1>
+            <ul class="reveal">
+                <li>provide alternative!</li>
+                <li> - readable</li>
+                <li> - usable - e.g. error messages, description of parsing</li>
+                <li> - simple - maybe 80/20 is good</li>
+                <li> - standard - tested specification</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h1>what?</h1>
+            <ul class="reveal">
+                <li>example-based</li>
+                <li>an example</li>
+                <li>a start: github.com/damned/egrex</li>
+                <li>disclaimer</li>
+                <li>some cases:</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h1>what? (cont)</h1>
+            <ul class="reveal">
+                <li>Q: So what is?<br><code>/^\d{3}-?\d{2}-?\d{4}$/</code></li>
+                <li>A: US social security number parsing, e.g. <code>123-456-789</code></li>
+                <li>egrex: <code>eg '123-45-6789', '-' => :optional</code></li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h1>what? (cont)</h1>
+            <ul class="reveal">
+                <li>Q: Ok, so what is?<br><code>/^(1[-\s.])?(\()?\d{3}(\))?[-\s.]?\d{3}[-\s.]?\d{4}$/</code></li>
+                <li>A: US phone number parsing, e.g. <code>1-(123)-555-6789</code></li>
+                <li>egrex: <code> eg('1-234-567-8900',
+                    '-'=> one_of(' -.'),
+                    '1-' => optional,
+                    '234' => (between('()') => optional))</code></li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h1>what? (cont)</h1>
+            <ul class="reveal">
+                <li>Q: Ok, how about the classic?<br><code>/^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/</code></li>
+                <li>A: email address parsing, e.g. [you get the idea...]</li>
+                <li>egrex: <code>help needed!!</code></li>
+            </ul>
+        </div>
+        <script type="text/javascript" src="js-pres.js"></script>
+	</body>
+</html>
