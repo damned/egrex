@@ -67,7 +67,11 @@ describe 'examples of interesting or complex regexes from the internet' do
 
       describe 'egrex form' do
 
-        egrex = eg('1-234-567-8900', '-' => one_of(' -.'), '1-' => optional, '234' => optionally(between('(', ')'))).show
+        egrex = eg('1-234-567-8900', 
+                     '-' => one_of(' -.'), 
+                     '1-' => optional, 
+                     '234' => may.be('(234)')
+                ).show
 
         xit 'should match space delimited' do
           egrex.match('123 555 6789').should_not be_nil
