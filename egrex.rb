@@ -77,17 +77,19 @@ module Egrex
     end
   end
 
+  class May < Specifier
+    def be(specifier)
+      @alternate_specifier = specifier
+      self
+    end
+  end
 
   def optional
     :optional
   end
 
-  def between(left, right)
-    'betweenie'
-  end
-
-  def optionally(modifier)
-    'ooooooh'
+  def may
+    May.new
   end
 
   def one_of(chars)
