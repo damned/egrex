@@ -1,4 +1,4 @@
-require_relative '../egrex'
+require_relative '../lib/egrex'
 
 include Egrex
 
