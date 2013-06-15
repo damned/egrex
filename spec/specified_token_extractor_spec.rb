@@ -33,4 +33,13 @@ describe 'SpecifiedTokenExtractor' do
 
     token_specifications.should include('Unspecified' => nil)
   end
+
+  it 'should order a mix of specified and unspecified tokens as in example string' do
+    tokens, specs = SpecifiedTokenExtractor.new.tokenize('FirstUnspecifiedLast', {
+        'st' => :a_specifier,
+        'La' => :another_specifier
+    })
+
+    tokens.should eq(['Fir', 'st', 'Unspecified', 'La', 'st'])
+  end
 end
