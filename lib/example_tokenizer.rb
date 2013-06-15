@@ -1,6 +1,6 @@
 class ExampleTokenizer
-  def initialize(specified_token_extractor, inferred_token_extractor)
-    @tokenizers = [ specified_token_extractor, inferred_token_extractor ]
+  def initialize(*extractors)
+    @tokenizers = extractors
   end
 
   def tokenize(example, specified_tokens)

@@ -12,7 +12,7 @@ describe ExampleTokenizer do
       @another_specifier = double('Specifier')
     end
 
-    it 'should pass ' do
+    it 'should delegate example string and where clause specifiers to first tokenizer' do
       specified_tokens = {
           'some' => @specifier,
           'example' => @another_specifier
@@ -24,15 +24,15 @@ describe ExampleTokenizer do
       stub_to_pass_through(@extractors[1])
 
       tokens, token_specifications = @example_tokenizer.tokenize('someexample', {
-          some: @specifier,
-          example: @another_specifier
+          'some' => @specifier,
+          'example' => @another_specifier
       })
 
       tokens.should eq(['some', 'example'])
       token_specifications.should eq(specified_tokens)
     end
 
-    it 'should extract unspecified, inferred tokens if composed entirely of inferred tokens' do
+    it 'should delegate to tokenizers and pass back tokens and specifiers from final tokenizer' do
       @extractors[0].stub(tokenize: [ ['testcase'], { } ])
       @extractors[1].stub(tokenize: [ ['testcase'], { 'testcase' => :some_specifier } ])
 
@@ -42,18 +42,41 @@ describe ExampleTokenizer do
       token_specifications.should eq('testcase' => :some_specifier)
     end
 
-    it 'should extract a mix of specified and inferred tokens'
+    it 'should convert symbol where specifier names into strings' do
+      extractor = double 'extractor'
+      stub_to_pass_through(extractor)
+
+      tokenizer = ExampleTokenizer.new(extractor)
+      tokens, token_specifications = tokenizer.tokenize('someexample', {
+          :some => @specifier,
+          :example => @another_specifier
+      })
+      token_specifications.keys.should eq ['some', 'example']
+    end
+  end
+  describe 'ruby 1.9 behaviour being relied upon' do
+    describe 'hash' do
+      it 'retains string key insertion order' do
+        hash = { 'z' => 0, 'e' => 1, 'r' => 2, 'o' => 3, 'x' => 4 }
+        hash.keys.should eq [ 'z', 'e', 'r', 'o', 'x' ]
+      end
+      it 'retains symbol key insertion order' do
+        hash = { z: 0, e: 1, r: 2, o: 3, x: 4 }
+        hash.keys.should eq [ :z, :e, :r, :o, :x ]
+      end
+      it 'retains original string key position even if value overwritten' do
+        hash = { 'z' => 0, 'e' => 1, 'r' => 2, 'o' => 3, 'x' => 4 }
+        hash['z'] = 999
+        hash.keys.should eq [ 'z', 'e', 'r', 'o', 'x' ]
+      end
+    end
   end
 end
 
-def stub_to_pass_through(extractor)
-  extractor.stub(:tokenize) do |tokens, specified|
+def stub_to_pass_through(tokenizer)
+  tokenizer.stub(:tokenize) do |tokens, specified|
     [tokens, specified]
   end
-end
-
-describe 'SpecifiedTokenExtractor' do
-  it 'should find specified tokens in an example string'
 end
 
 describe 'InferredTokenExtractor' do
