@@ -1,11 +1,22 @@
 class SpecifiedTokenExtractor
   def tokenize(example='', specifiers)
-    position = {}
-    specifiers.keys.each do |name|
-      position[name] = example.index(name)
+    positions = {}
+    specs = specifiers
+    specs.keys.each do |name|
+      positions[name] = example.index(name)
     end
-    specifier_names = sort_by_values(position).keys
-    [ specifier_names, specifiers ]
+    names_and_positions = sort_by_values(positions)
+    names = []
+    next_token_pos = 0
+    names_and_positions.each { |name, pos|
+      if pos > next_token_pos
+        names << example.slice(next_token_pos...pos)
+        specs[names.last] = nil
+      end
+      names << name
+      next_token_pos = pos + name.length
+    }
+    [ names, specs ]
   end
 
   def sort_by_values(hash)

@@ -1,4 +1,5 @@
 require 'rspec'
+require 'rspec/matchers'
 require_relative '../lib/specified_token_extractor'
 
 describe 'SpecifiedTokenExtractor' do
@@ -22,5 +23,14 @@ describe 'SpecifiedTokenExtractor' do
     tokens.should eq(['First', 'Second'])
     token_specifications.should include({'First' => :another_specifier,
                                          'Second' => :a_specifier})
+  end
+
+  it 'should include of example not matched by specifier names as nil-valued specifiers' do
+    tokens, token_specifications = SpecifiedTokenExtractor.new.tokenize('FirstUnspecifiedLast', {
+        'First' => :a_specifier,
+        'Last' => :another_specifier
+    })
+
+    token_specifications.should include('Unspecified' => nil)
   end
 end
