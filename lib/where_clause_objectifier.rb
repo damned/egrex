@@ -15,7 +15,7 @@ module Egrex
 
     def objectify(specifier)
       unless known_specifiers.has_key? specifier
-        raise EgrexError.new("Unknown specifier: #{specifier.inspect} - egrex knows about:\n#{symbols_list known_specifiers}")
+        raise EgrexError.new("Unknown specifier: #{specifier.inspect} - egrex knows about: #{known_specifiers.keys}")
       end
       known_specifiers[specifier].new
     end
@@ -23,12 +23,9 @@ module Egrex
     def known_specifiers
       {
           alphabetic: Alphabetic,
-          digits: Digits
+          digits: Digits,
+          optional: Optional
       }
-    end
-
-    def symbols_list(symbols)
-      symbols.collect(&:inspect).join(', ')
     end
   end
 end

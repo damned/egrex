@@ -2,6 +2,7 @@ require_relative 'example_tokenizer'
 require_relative 'specified_token_extractor'
 require_relative 'inferred_token_extractor'
 require_relative 'where_clause_objectifier'
+require_relative 'specifiers/specifiers'
 
 module Egrex
 
@@ -16,30 +17,15 @@ module Egrex
     def compile
       tokenizer = ExampleTokenizer.new(SpecifiedTokenExtractor.new, InferredTokenExtractor.new)
       tokens, specs = tokenizer.tokenize(@example, @where)
-      @specs = WhereClauseObjectifier.new.process(specs)
+      specs = WhereClauseObjectifier.new.process(specs)
+      specs.each_pair { |part, specifier|
+
+      }
       self
     end
     def show
       puts 'nothing here...'
       self
-    end
-  end
-
-  class Specifier
-    def compile
-      'should return a regex?'
-    end
-  end
-
-  class Alphabetic < Specifier
-    def compile
-      /[[:alpha:]]+/
-    end
-  end
-
-  class Digits < Specifier
-    def compile
-      /[[:digit:]]+/
     end
   end
 
