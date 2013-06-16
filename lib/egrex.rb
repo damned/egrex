@@ -39,7 +39,6 @@ module Egrex
         if specifier == :optional
           specification = c + '?'
         elsif specifier.class <= Specifier
-          puts 'its a specifier'
           specification = specifier.compile
         else
           raise "Unknown specifier: #{specifier}"
