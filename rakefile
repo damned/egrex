@@ -1,7 +1,46 @@
-require 'isolate/now'
+task :default => :test
 
-task :default => :not_much
+task :test => :gems_installed do
+  run 'rspec'
+end
 
-task :not_much do
-  puts 'not doing much'
+
+## isolate
+
+task :gems_installed => :isolate_installed do
+  require 'isolate/now'
+end
+
+task :isolate_installed do
+  if isolate_installed?() then
+    run 'gem install isolate', 'isolate not present, installing...'
+    rerun 'running rake again, now with isolate...'
+  end
+end
+
+def isolate_installed?
+  `gem list isolate | grep isolate`
+  $?.exitstatus != 0
+end
+
+
+## run in shell
+
+def rerun(feedback)
+  run current_process_cmdline, feedback 
+  exit 0
+end
+
+def run(cmdline, feedback = '')
+  puts feedback unless feedback.empty?
+  puts `#{cmdline}`
+  result = $?.exitstatus
+  if result != 0
+    puts "run of '#{cmdline}' failed with exitcode #{result}"
+    exit result
+  end
+end
+
+def current_process_cmdline
+  "#{$0} #{$ARGV}"
 end
