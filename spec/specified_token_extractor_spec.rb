@@ -43,4 +43,13 @@ describe 'SpecifiedTokenExtractor' do
 
     tokens.should eq(['Fir', 'st', 'Unspecified', 'La', 'st'])
   end
+
+  it 'should accept tokens in parts' do
+    tokens, specs = SpecifiedTokenExtractor.new.
+        tokenize(['Some', 'Example'],
+                 'So' => :a_specifier,
+                 'ample' => :another_specifier)
+
+    tokens.should eq(['So', 'me', 'Ex', 'ample'])
+  end
 end

@@ -1,3 +1,7 @@
+require_relative 'example_tokenizer'
+require_relative 'specified_token_extractor'
+require_relative 'inferred_token_extractor'
+
 module Egrex
 
   class Example
@@ -9,7 +13,8 @@ module Egrex
       raise 'oops'
     end
     def compile
-      puts 'am really not doing much'
+      tokenizer = ExampleTokenizer.new(SpecifiedTokenExtractor.new, InferredTokenExtractor.new)
+      tokens, specs = tokenizer.tokenize(@example, @where)
       self
     end
     def show

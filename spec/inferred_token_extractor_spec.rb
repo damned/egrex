@@ -5,16 +5,19 @@ describe InferredTokenExtractor do
   def extractor
     InferredTokenExtractor.new
   end
+
   it 'should infer token as alphabetic if consists of consecutive alphabetic characters' do
     tokens, specs = extractor.tokenize('blah')
     tokens.should eq ['blah']
     specs.should eq('blah' => :alphabetic)
   end
+
   it 'should infer token as numeric if consists of consecutive number digits' do
     tokens, specs = extractor.tokenize('123')
     tokens.should eq ['123']
     specs.should eq('123' => :digits)
   end
+
   it 'should not override specifiers' do
     tokens, specs = extractor.tokenize 'blah', { 'blah' => :digits }
     specs['blah'].should eq :digits
