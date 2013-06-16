@@ -3,7 +3,7 @@ class ExampleTokenizer
     @tokenizers = extractors
   end
 
-  def tokenize(example, specified_tokens)
+  def tokenize(example, specified_tokens={})
     example_parts = [ example ]
     tokens = keys_as_strings(specified_tokens)
     @tokenizers.each do |tokenizer|

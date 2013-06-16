@@ -53,6 +53,11 @@ describe ExampleTokenizer do
       })
       token_specifications.keys.should eq ['some', 'example']
     end
+    it 'should default to no specifiers if not passed' do
+      tokens, specs = ExampleTokenizer.new.tokenize('blah')
+      tokens.should eq ['blah']
+      specs.length.should eq 0
+    end
   end
   describe 'ruby 1.9 behaviour being relied upon' do
     describe 'hash' do
@@ -77,10 +82,5 @@ def stub_to_pass_through(tokenizer)
   tokenizer.stub(:tokenize) do |tokens, specified|
     [tokens, specified]
   end
-end
-
-describe 'InferredTokenExtractor' do
-  it 'should infer tokens in example based on heuristic of consecutive characters of the same type'
-  it 'should tokenize an array of multiple example parts into an array of token strings'
 end
 
