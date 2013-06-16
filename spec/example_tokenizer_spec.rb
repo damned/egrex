@@ -53,6 +53,7 @@ describe ExampleTokenizer do
       })
       token_specifications.keys.should eq ['some', 'example']
     end
+
     it 'should default to no specifiers if not passed' do
       tokens, specs = ExampleTokenizer.new.tokenize('blah')
       tokens.should eq ['blah']
