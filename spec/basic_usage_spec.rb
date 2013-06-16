@@ -1,6 +1,6 @@
-require_relative '../lib/egrex'
+require_relative '../lib/egrex_old'
 
-include Egrex
+include EgrexOld
 
 describe 'basic behaviour of api' do
   describe 'invalid arguments' do

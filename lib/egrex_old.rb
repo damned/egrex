@@ -1,4 +1,7 @@
-module Egrex
+
+module EgrexOld
+
+  warn "EgrexOld's days are numbered, working on Egrex implementation"
 
   class Example
     def initialize(example, where)
@@ -6,21 +9,50 @@ module Egrex
       @where = where
     end
     def match(s)
-      raise 'oops'
+      @pattern.match(s)
+    end
+    def tokenize(s)
+      s.chars
     end
     def compile
-      puts 'am really not doing much'
+      pattern = ''
+
+      tokenize(@example).each { |token|
+        case token
+        when /\d/
+          pattern << '\d'
+        else
+          pattern << specified(token)
+        end
+      }
+      @pattern = /^#{pattern}$/
       self
     end
     def show
-      puts 'nothing here...'
+      puts "pattern: #{@pattern}"
       self
+    end
+    private
+
+    def specified(c)
+      specification = c
+      if @where.has_key? c
+        specifier = @where[c]
+        if specifier == :optional
+          specification = c + '?'
+        elsif specifier.class <= Specifier
+          specification = specifier.compile
+        else
+          raise "Unknown specifier: #{specifier}"
+        end
+      end
+      specification
     end
   end
 
   class Specifier
     def compile
-      'should return a regex?'
+      'should return a regex'
     end
   end
 
@@ -68,5 +100,5 @@ module Egrex
   def eg(example, where = {})
     Example.new(example, where).compile
   end
-
+  
 end

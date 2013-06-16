@@ -1,6 +1,6 @@
-require_relative '../lib/egrex'
+require_relative '../lib/egrex_old'
 
-include Egrex
+include EgrexOld
 
 describe 'examples of interesting or complex regexes from the internet' do
   describe 'http://blog.flimflan.com/ReadableRegularExpressions.html' do
