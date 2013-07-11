@@ -7,24 +7,26 @@ include Egrex
 describe 'specifiers' do
   describe Alphabetic do
     it 'should match any number of chars' do
-      alphabetic.match('abc')[0].should eq 'abc'
-      alphabetic.match('a')[0].should eq 'a'
-      alphabetic.match('abadsfadsfasd')[0].should eq 'abadsfadsfasd'
+      Alphabetic.new.match('abc')[0].should eq 'abc'
+      Alphabetic.new.match('a')[0].should eq 'a'
+      Alphabetic.new.match('abadsfadsfasd')[0].should eq 'abadsfadsfasd'
     end
 
     it 'should not match empty string' do
-      alphabetic.match('').should be_false
+      Alphabetic.new.match('').should be_false
     end
 
     it 'should not match if has no alphabetics' do
-      alphabetic.match('1').should be_false
-      alphabetic.match('777799').should be_false
+      Alphabetic.new.match('1').should be_false
+      Alphabetic.new.match('777799').should be_false
     end
 
-    it 'should match first alphabetic sequence if has any alphabetics' do
-      alphabetic.match('foo bar')[0].should eq 'foo'
-      alphabetic.match('8foo9bar')[0].should eq 'foo'
-      alphabetic.match('7777q9')[0].should eq 'q'
+    it 'should not match if only starts with alphabetic sequence' do
+      Alphabetic.new.match('foo9').should be_false
+    end
+
+    it 'should not match if only ends with alphabetic sequence' do
+      Alphabetic.new.match('8foobar').should be_false
     end
   end
 
@@ -65,16 +67,19 @@ describe 'specifiers' do
 
   describe 'Modifiers:' do
     describe Optional do
-      xit 'should modify a specifier to make it optional' do
+      it 'should modify a literal to make it optional' do
         modified = Optional.new.modify(Literal.new('a'))
         modified.match('a')[0].should eq 'a'
-        modified.match('')[0].should be ''
+        modified.match('')[0].should eq ''
         modified.match('b')
+      end
+      it 'should modify an albhabetic string matcher to make it optional' do
+        modified = Optional.new.modify(Alphabetic.new('whatever'))
+        modified.match('abacsdkjf')[0].should eq 'abacsdkjf'
+        modified.match('')[0].should eq ''
+        modified.match('1').should be_false
       end
     end
   end
 end
 
-def alphabetic
-  /#{Alphabetic.new.to_regex_s}/
-end

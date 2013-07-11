@@ -50,7 +50,7 @@ module Egrex
         literal
       }.join
       puts "literals regex: #{regex}"
-      /#{regex}/
+      regex
     end
   end
 

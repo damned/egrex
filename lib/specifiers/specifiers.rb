@@ -28,9 +28,32 @@ module Egrex
 
   # modifiers passed to all non-modifiers
   class Modifier < Specifier
+    def modify(specifier)
+
+    end
   end
 
-  class Optional < Modifier
+  class RegexModifier < RegexSpecifier
+  end
+
+  class Optional < RegexModifier
+    def modify(specifier)
+      @specifier = specifier
+      @unmodified = @specifier.to_regex_s
+      self
+    end
+    def to_regex_s
+      # okay probably not the right place for this...
+      if plural
+        "#{@unmodified.chop}*"
+      else
+        "#{@unmodified}?"
+      end
+    end
+
+    def plural
+      @unmodified.end_with? '+'
+    end
   end
 
 end
