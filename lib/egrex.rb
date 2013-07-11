@@ -12,15 +12,18 @@ module Egrex
       @where = where
     end
     def match(s)
-      raise 'oops'
+      puts "compiled regex: #{@regex}"
+      @regex.match s
     end
     def compile
       tokenizer = ExampleTokenizer.new(SpecifiedTokenExtractor.new, InferredTokenExtractor.new)
       tokens, specs = tokenizer.tokenize(@example, @where)
       specs = WhereClauseObjectifier.new.process(specs)
-      specs.each_pair { |part, specifier|
-
+      regex_string = ''
+      specs.each_value { |specifier|
+        regex_string += specifier.to_regex_s
       }
+      @regex = Regexp.new regex_string
       self
     end
     def show
@@ -29,12 +32,12 @@ module Egrex
     end
   end
 
-  class Literals < Specifier
+  class Literal < RegexSpecifier
     def initialize(literals)
       @literals = literals
     end
 
-    def compile
+    def to_regex_s
       to_regex(@literals)
     end
     private
@@ -67,7 +70,7 @@ module Egrex
   end
 
   def one_of(chars)
-    Literals.new(chars)
+    Literal.new(chars)
   end
 
   def eg(example, where = {})

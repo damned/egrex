@@ -12,7 +12,7 @@ describe WhereClauseObjectifier do
         objects.values.first.should be_a Alphabetic
       end
       it 'should replace multiple specifiers values with appropriate Specifiers' do
-        objects = objectifier.process 'b' => :alphabetic, 'a' => :digits
+        objects = objectifier.process('b' => :alphabetic, 'a' => :digits)
         objects['a'].should be_a Digits
         objects['b'].should be_a Alphabetic
       end

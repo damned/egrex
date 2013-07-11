@@ -6,18 +6,18 @@ module Egrex
     def process(symbols)
       specs = {}
       symbols.each_pair { |part, specifier|
-        specs[part] = objectify(specifier)
+        specs[part] = objectify(part, specifier)
       }
       specs
     end
 
     private
 
-    def objectify(specifier)
+    def objectify(subject, specifier)
       unless known_specifiers.has_key? specifier
         raise EgrexError.new("Unknown specifier: #{specifier.inspect} - egrex knows about: #{known_specifiers.keys}")
       end
-      known_specifiers[specifier].new
+      known_specifiers[specifier].new(subject)
     end
 
     def known_specifiers
