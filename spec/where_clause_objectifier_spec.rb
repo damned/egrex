@@ -3,10 +3,12 @@ require_relative '../lib/where_clause_objectifier'
 
 include Egrex
 
-
 describe WhereClauseObjectifier do
+
   describe '#process' do
+
     describe 'objectification' do
+
       it 'should replace specifier symbol value with appropriate Specifier' do
         objects = objectifier.process 'a' => :alphabetic
         objects.values.first.should be_a Alphabetic
@@ -15,6 +17,17 @@ describe WhereClauseObjectifier do
         objects = objectifier.process('b' => :alphabetic, 'a' => :digits)
         objects['a'].should be_a Digits
         objects['b'].should be_a Alphabetic
+      end
+      it 'should leave modifier objects in place' do
+        modifier = Modifier.new
+        objects = objectifier.process('m' => modifier)
+        objects['m'].should be modifier
+      end
+
+      it 'should leave specifier objects in place' do
+        specifier = Specifier.new
+        objects = objectifier.process('s' => specifier)
+        objects['s'].should be specifier
       end
     end
 

@@ -1,16 +1,18 @@
+require_relative 'matchable'
+require_relative '../log'
+
 module Egrex
   class Specifier
+    include Log
     def initialize(subject='')
       @subject = subject
     end
   end
 
   class RegexSpecifier < Specifier
+    include Matchable
     def to_regex_s
       'should return a regex snippet string'
-    end
-    def match(s)
-      /^#{to_regex_s}$/.match(s)
     end
   end
 
@@ -27,13 +29,15 @@ module Egrex
   end
 
   # modifiers passed to all non-modifiers
-  class Modifier < Specifier
+  class Modifier
+    include Log
     def modify(specifier)
 
     end
   end
 
-  class RegexModifier < RegexSpecifier
+  class RegexModifier < Modifier
+    include Matchable
   end
 
   class Optional < RegexModifier
@@ -51,6 +55,7 @@ module Egrex
       end
     end
 
+    private
     def plural
       @unmodified.end_with? '+'
     end

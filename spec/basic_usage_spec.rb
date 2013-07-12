@@ -1,4 +1,3 @@
-require_relative '../lib/egrex_old'
 require_relative '../lib/egrex'
 
 include Egrex

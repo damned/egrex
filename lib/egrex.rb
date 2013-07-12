@@ -3,16 +3,17 @@ require_relative 'specified_token_extractor'
 require_relative 'inferred_token_extractor'
 require_relative 'where_clause_objectifier'
 require_relative 'specifiers/specifiers'
+require_relative 'log'
 
 module Egrex
 
   class Example
+    include Log
     def initialize(example, where)
       @example = example
       @where = where
     end
     def match(s)
-      puts "compiled regex: #{@regex}"
       @regex.match s
     end
     def compile
@@ -20,14 +21,19 @@ module Egrex
       tokens, specs = tokenizer.tokenize(@example, @where)
       specs = WhereClauseObjectifier.new.process(specs)
       regex_string = ''
-      specs.each_value { |specifier|
+      tokens.each { |token|
+        specifier = specs[token]
+        if specifier.nil?
+          raise 'Thats pretty fubar, specifier is nil in ' + specs.inspect
+        end
         regex_string += specifier.to_regex_s
       }
+      trace "compiled regex: #{regex_string}"
       @regex = Regexp.new regex_string
       self
     end
     def show
-      puts 'nothing here...'
+      log 'nothing here...'
       self
     end
   end
@@ -49,15 +55,21 @@ module Egrex
         end
         literal
       }.join
-      puts "literals regex: #{regex}"
+      trace "literals regex: #{regex}"
       regex
     end
   end
 
-  class May < Specifier
+  class May < Modifier
     def be(specifier)
       @alternate_specifier = specifier
       self
+    end
+    def modify(specifier)
+      @initial_specifier = specifier
+    end
+    def to_regex_s
+      'blah blah blah'
     end
   end
 

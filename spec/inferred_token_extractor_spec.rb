@@ -18,6 +18,24 @@ describe InferredTokenExtractor do
     specs.should eq('123' => :digits)
   end
 
+  it 'should infer an alphabetic token followed by a numeric token' do
+    tokens, specs = extractor.tokenize('abc123')
+    tokens.should eq ['abc', '123']
+    specs.should eq('abc' => :alphabetic, '123' => :digits)
+  end
+
+  it 'should infer token as literal if not consecutive digits or alphabetics' do
+    tokens, specs = extractor.tokenize('123-456')
+    tokens.should eq ['123', '-', '456']
+    specs.should include('-' => :literal)
+  end
+
+  it 'should infer repeated tokens' do
+    tokens, specs = extractor.tokenize('123-123-123')
+    tokens.should eq ['123', '-', '123', '-', '123']
+    specs.should include('-' => :literal, '123' => :digits)
+  end
+
   it 'should not override specifiers' do
     tokens, specs = extractor.tokenize 'blah', { 'blah' => :digits }
     specs['blah'].should eq :digits
@@ -30,8 +48,8 @@ describe InferredTokenExtractor do
   end
 
   it 'should infer specifiers for tokens without specifiers when there is a mix' do
-    tokens, specs = extractor.tokenize ['blah1', 'foo', 'bar', '123'], 'bar' => :digits, 'blah1' => :alphabetic
-    tokens.should eq ['blah1', 'foo', 'bar', '123']
-    specs.should eq('blah1' => :alphabetic, 'foo' => :alphabetic, 'bar' => :digits, '123' => :digits)
+    tokens, specs = extractor.tokenize ['blah2', 'foo', 'bar', '123'], 'bar' => :digits, 'blah2' => :alphabetic
+    tokens.should eq ['blah2', 'foo', 'bar', '123']
+    specs.should eq('blah2' => :alphabetic, 'foo' => :alphabetic, 'bar' => :digits, '123' => :digits)
   end
 end

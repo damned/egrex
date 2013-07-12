@@ -14,6 +14,9 @@ module Egrex
     private
 
     def objectify(subject, specifier)
+      if specifier.is_a?(Modifier) || specifier.is_a?(Specifier)
+        return specifier
+      end
       unless known_specifiers.has_key? specifier
         raise EgrexError.new("Unknown specifier: #{specifier.inspect} - egrex knows about: #{known_specifiers.keys}")
       end
@@ -24,6 +27,7 @@ module Egrex
       {
           alphabetic: Alphabetic,
           digits: Digits,
+          literal: Literal,
           optional: Optional
       }
     end

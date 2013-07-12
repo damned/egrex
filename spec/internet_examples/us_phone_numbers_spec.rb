@@ -1,6 +1,6 @@
-require_relative '../../lib/egrex_old'
+require_relative '../../lib/egrex'
 
-include EgrexOld
+include Egrex
 
 describe 'examples of interesting or complex regexes from the internet' do
   describe 'http://net.tutsplus.com/tutorials/php/advanced-regular-expression-tips-and-techniques/' do
