@@ -26,26 +26,31 @@ module Egrex
       [ outparts , specs ]
     end
 
-    def infer_specifier(part, &handler)
+    TYPE_MATCHERS = {
+        digits: /^[[:digit:]]+/,
+        alphabetic: /^[[:alpha:]]+/,
+        literal: /^[^[:alpha:][:digit:]]+/
+    }
+
+    def infer_specifier(part, &inference_handler)
       trace "part: #{part}"
-      return if match_part(handler, part, /^[[:digit:]]+/, :digits)
-      return if match_part(handler, part, /^[[:alpha:]]+/, :alphabetic)
-      match_part(handler, part, /^[^[:alpha:][:digit:]]+/, :literal)
+      TYPE_MATCHERS.each do |type, matcher|
+        return if match_part(inference_handler, part, matcher, type)
+      end
     end
 
     def match_part(match_handler, part, matcher, type)
       chars = part.size
       match = matcher.match part
-      if match
-        match_handler.call match[0], type
-        trace "match 0: #{match[0]}"
-        if (match[0].size < chars)
-          infer_specifier(part.slice(match[0].size, part.size), &match_handler)
-        end
-        true
-      else
-        false
+      return false unless match
+
+      trace "match 0: #{match[0]} (#{type})"
+      match_handler.call match[0], type
+      if (match[0].size < chars)
+        remainder = part.slice(match[0].size, part.size)
+        infer_specifier(remainder, &match_handler)
       end
+      true
     end
   end
 end
