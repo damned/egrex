@@ -26,36 +26,25 @@ module Egrex
       [ outparts , specs ]
     end
 
-    # todo: refac
     def infer_specifier(part, &handler)
       trace "part: #{part}"
+      return if match_part(handler, part, /^[[:digit:]]+/, :digits)
+      return if match_part(handler, part, /^[[:alpha:]]+/, :alphabetic)
+      match_part(handler, part, /^[^[:alpha:][:digit:]]+/, :literal)
+    end
+
+    def match_part(match_handler, part, matcher, type)
       chars = part.size
-      match = /^[[:digit:]]+/.match part
+      match = matcher.match part
       if match
-        handler.call match[0], :digits
+        match_handler.call match[0], type
         trace "match 0: #{match[0]}"
         if (match[0].size < chars)
-          infer_specifier(part.slice(match[0].size, part.size), &handler)
+          infer_specifier(part.slice(match[0].size, part.size), &match_handler)
         end
-        return
-      end
-      match = /^[[:alpha:]]+/.match part
-      if match
-        trace "match 0: #{match[0]}"
-        handler.call match[0], :alphabetic
-        if (match[0].size < chars)
-          infer_specifier(part.slice(match[0].size, part.size), &handler)
-        end
-        return
-      end
-      match = /^[^[:alpha:][:digit:]]+/.match part
-      if match
-        trace "match 0: #{match[0]}"
-        handler.call match[0], :literal
-        if (match[0].size < chars)
-          infer_specifier(part.slice(match[0].size, part.size), &handler)
-        end
-        return
+        true
+      else
+        false
       end
     end
   end
