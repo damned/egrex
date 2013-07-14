@@ -2,6 +2,9 @@ require_relative 'matchable'
 require_relative '../log'
 
 module Egrex
+  Specifiers = Set.new [:digits, :alphabetic, :literal]
+  Modifiers = Set.new [:optional]
+
   class Specifier
     include Log
     def initialize(subject='')
@@ -31,6 +34,9 @@ module Egrex
   # modifiers passed to all non-modifiers
   class Modifier
     include Log
+    def initialize(subject='')
+      @subject = subject
+    end
     def modify(specifier)
 
     end

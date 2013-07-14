@@ -1,7 +1,7 @@
 
 module Egrex
   module Log
-    @@level = nil
+    @@level = :trace
     @@caller_path_to_drop = ENV['PWD']
     LEVELS = [:info, :trace]
     def on?(level)

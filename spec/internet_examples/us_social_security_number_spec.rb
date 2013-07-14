@@ -8,10 +8,6 @@ describe 'examples of interesting, useful or complex regexes from the internet' 
     describe 'US social security number parsing' do
 
       shared_examples :us_ssn_matcher_not_yet_implemented do |matcher|
-        it 'should match nine numbers' do
-          matcher.match('224466889')[0].should eq '224466889'
-        end
-
         it 'should not match with hyphens in wrong places' do
           matcher.match('111-222-333').should be_nil
         end
@@ -29,10 +25,6 @@ describe 'examples of interesting, useful or complex regexes from the internet' 
         end
 
         it 'should not match if not enough digits' do
-          matcher.match('12345').should be_nil
-        end
-
-        it 'should not match if not enough digits' do
           matcher.match('1234567890').should be_nil
         end
       end
@@ -40,6 +32,14 @@ describe 'examples of interesting, useful or complex regexes from the internet' 
       shared_examples :us_ssn_matcher do |matcher|
         it 'should match with hyphens in there' do
           matcher.match('111-22-4445')[0].should eq '111-22-4445'
+        end
+
+        it 'should match nine numbers' do
+          matcher.match('224466889')[0].should eq '224466889'
+        end
+
+        it 'should not match if not enough digits' do
+          matcher.match('12345').should be_nil
         end
 
       end

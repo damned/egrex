@@ -1,4 +1,4 @@
-require 'rspec'
+require_relative 'spec_helper'
 require_relative '../lib/inferred_token_extractor'
 
 describe InferredTokenExtractor do
@@ -36,9 +36,19 @@ describe InferredTokenExtractor do
     specs.should include('-' => :literal, '123' => :digits)
   end
 
-  it 'should not override specifiers' do
+  it 'should not override explicit specifiers' do
     tokens, specs = extractor.tokenize 'blah', { 'blah' => :digits }
     specs['blah'].should eq :digits
+  end
+
+  it 'should apply explicit modifier to inferred specifier (alphabetic, optional)' do
+    tokens, specs = extractor.tokenize 'abc', { 'abc' => :optional }
+    specs['abc'].should include :alphabetic, :optional
+  end
+
+  it 'should apply explicit modifier to inferred specifier (digits, optional)' do
+    tokens, specs = extractor.tokenize '123', { '123' => :optional }
+    specs['123'].should include :digits, :optional
   end
 
   it 'should infer specifiers for an array of mixed tokens' do
@@ -52,4 +62,17 @@ describe InferredTokenExtractor do
     tokens.should eq ['blah2', 'foo', 'bar', '123']
     specs.should eq('blah2' => :alphabetic, 'foo' => :alphabetic, 'bar' => :digits, '123' => :digits)
   end
+
+  it 'should infer extra specifiers for token which has an explicit modifier' do
+    tokens, specs = extractor.tokenize ['foo-bar'], '-' => :optional
+    tokens.should eq ['foo', '-', 'bar']
+    specs.should include('-' => [:literal, :optional])
+  end
+
+  it 'should infer extra specifiers for token which has an explicit modifier' do
+    tokens, specs = extractor.tokenize ['foo-bar'], '-' => :optional
+    tokens.should eq ['foo', '-', 'bar']
+    specs.should include('-' => [:literal, :optional])
+  end
+
 end

@@ -29,6 +29,29 @@ describe WhereClauseObjectifier do
         objects = objectifier.process('s' => specifier)
         objects['s'].should be specifier
       end
+
+      class DummyModifier < RegexModifier
+        def modify(specifier)
+          "i modified a #{specifier.class}"
+        end
+      end
+      it 'should apply modifier objects to specifier objects in place' do
+        modifier = DummyModifier.new
+        specifier = Specifier.new
+        objects = objectifier.process('s' => [specifier, modifier])
+        objects['s'].should eq 'i modified a Egrex::Specifier'
+      end
+      it 'should apply modifier objects to specifier for explicit symbol in place' do
+        modifier = DummyModifier.new
+        objects = objectifier.process('s' => [:digits, modifier])
+        objects['s'].should eq 'i modified a Egrex::Digits'
+      end
+
+      it 'should apply modifier objects for explicit symbol to specifier for explicit symbol in place' do
+        objects = objectifier.process('s' => [:literal, :optional])
+        objects['s'].should be_a Optional
+        objects['s'].to_regex_s.should eq 's?'
+      end
     end
 
     describe 'error handling' do
