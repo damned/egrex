@@ -28,6 +28,7 @@ module Egrex
         end
         regex_string += specifier.to_regex_s
       }
+      regex_string = "^#{regex_string}$"
       trace "compiled regex: #{regex_string}"
       @regex = Regexp.new regex_string
       self

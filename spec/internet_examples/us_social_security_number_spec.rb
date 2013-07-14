@@ -8,25 +8,6 @@ describe 'examples of interesting, useful or complex regexes from the internet' 
     describe 'US social security number parsing' do
 
       shared_examples :us_ssn_matcher_not_yet_implemented do |matcher|
-        it 'should not match with hyphens in wrong places' do
-          matcher.match('111-222-333').should be_nil
-        end
-
-        it 'should not match if any leading non-digits' do
-          matcher.match('a123456789').should be_nil
-        end
-
-        it 'should not match if any trailing non-digits' do
-          matcher.match('123-45-6789XX').should be_nil
-        end
-
-        it 'should not match if any trailing non-digits' do
-          matcher.match('123-45-6789XX').should be_nil
-        end
-
-        it 'should not match if not enough digits' do
-          matcher.match('1234567890').should be_nil
-        end
       end
 
       shared_examples :us_ssn_matcher do |matcher|
@@ -42,6 +23,24 @@ describe 'examples of interesting, useful or complex regexes from the internet' 
           matcher.match('12345').should be_nil
         end
 
+        it 'should not match if not enough digits' do
+          matcher.match('1234567890').should be_nil
+        end
+        it 'should not match with hyphens in wrong places' do
+          matcher.match('111-222-333').should be_nil
+        end
+
+        it 'should not match if any leading non-digits' do
+          matcher.match('a123456789').should be_nil
+        end
+
+        it 'should not match if any trailing non-digits' do
+          matcher.match('123-45-6789XX').should be_nil
+        end
+
+        it 'should not match if any trailing non-digits' do
+          matcher.match('123-45-6789XX').should be_nil
+        end
       end
 
       describe 'regex form' do
