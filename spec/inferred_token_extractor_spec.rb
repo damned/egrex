@@ -74,5 +74,4 @@ describe InferredTokenExtractor do
     tokens.should eq ['foo', '-', 'bar']
     specs.should include('-' => [:literal, :optional])
   end
-
 end

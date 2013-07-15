@@ -45,17 +45,7 @@ module Egrex
     end
 
     def to_regex_s
-      to_regex(@literals)
-    end
-    private
-
-    def to_regex(literals)
-      regex = literals.chars.collect { |literal|
-        if '.'.include? literal
-          return "\\#{literal}"
-        end
-        literal
-      }.join
+      regex = Regexp.escape(@literals)
       trace "literals regex: #{regex}"
       regex
     end
@@ -82,8 +72,16 @@ module Egrex
     May.new
   end
 
+  class OneLiteralFrom < Literal
+    def to_regex_s
+      regex = "[#{@literals.chars.collect { |c|Regexp.escape(c)}.join}]"
+      trace "literals regex: #{regex}"
+      regex
+    end
+  end
+
   def one_of(chars)
-    Literal.new(chars)
+    OneLiteralFrom.new(chars)
   end
 
   def eg(example, where = {})
