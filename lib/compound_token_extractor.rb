@@ -23,8 +23,6 @@ module Egrex
           unless specs[outer_key].is_a? Array
             specs[outer_key] = [specs[outer_key]]
           end
-        }
-        specs.each_key_in_a_key { |inner_key, outer_key|
           unless specs[outer_key].last.is_a? Hash
             specs[outer_key] << {}
           end
