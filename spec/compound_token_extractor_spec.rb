@@ -45,7 +45,15 @@ describe CompoundTokenExtractor do
                       'example' => [ :another_specifier, { 'm' => :inner_specifier}]
     end
 
-    it 'should convert where multiple sub-tokens are used in a token'
+    it 'should convert where multiple sub-tokens are used in a token' do
+      tokens, specs = CompoundTokenExtractor.new.tokenize('someexample', {
+          'so' => :inner_specifier,
+          'me' => :another_inner_specifier,
+          'some' => :outer_specifier
+      })
+      specs.should eq 'some' => [ :outer_specifier, { 'so' => :inner_specifier, 'me' => :another_inner_specifier}]
+
+    end
 
     it 'should not change specs if no overlap in tokens' do
       tokens, specs = CompoundTokenExtractor.new.tokenize('someexample', {

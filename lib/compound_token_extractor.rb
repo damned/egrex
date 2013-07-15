@@ -1,25 +1,43 @@
 module Egrex
   class CompoundTokenExtractor
 
-    def tokenize(example_parts, specs)
-      spec_tokens = specs.keys
-      sub_tokens = []
-      if spec_tokens.size > 1
-        spec_tokens.each do |inner_key|
-          spec_tokens.select {|key| key != inner_key}.each do |outer_key|
+    module HashKeyInKeyFinder
+      def each_key_in_a_key
+        keys = self.keys
+        keys.each do |inner_key|
+          (keys - [inner_key]).each do |outer_key|
             if outer_key.include? inner_key
-              inner_spec = specs[inner_key]
-              outer_spec = specs[outer_key]
-              specs[outer_key] = [ outer_spec, {inner_key => inner_spec}]
-              sub_tokens << inner_key
+              yield inner_key, outer_key
             end
           end
         end
       end
-      specs.delete_if { |token|
-        sub_tokens.include? token
-      }
+    end
+    def tokenize(example_parts, specs)
+      spec_tokens = specs.keys
+      sub_tokens = []
+      if specs.size > 1
+        compounds = {}
+        specs.extend HashKeyInKeyFinder
+        specs.each_key_in_a_key { |inner_key, outer_key|
+          unless specs[outer_key].is_a? Array
+            specs[outer_key] = [specs[outer_key]]
+          end
+        }
+        specs.each_key_in_a_key { |inner_key, outer_key|
+          unless specs[outer_key].last.is_a? Hash
+            specs[outer_key] << {}
+          end
+        }
+        specs.each_key_in_a_key { |inner_key, outer_key|
+          specs[outer_key].last[inner_key] = specs[inner_key]
+        }
+        specs.each_key_in_a_key { |inner_key|
+          specs.delete inner_key
+        }
+      end
       [example_parts, specs]
     end
+
   end
 end
