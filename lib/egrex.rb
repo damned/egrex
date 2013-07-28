@@ -34,7 +34,7 @@ module Egrex
       self
     end
     def show
-      log 'nothing here...'
+      log 'nothing here...show not implemented yet in new egrex'
       self
     end
   end
