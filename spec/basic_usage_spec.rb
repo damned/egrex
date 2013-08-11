@@ -7,7 +7,7 @@ describe 'basic behaviour of api' do
 
     describe 'invalid where' do
 
-        it 'should raise error for unknown specifier' do
+        xit 'should raise error for unknown specifier' do
           expect {
             eg('123-456', '-' => :some_unknown_specifier)
           }
