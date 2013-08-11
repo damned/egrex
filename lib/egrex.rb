@@ -1,4 +1,5 @@
 require_relative 'log'
+require_relative 'match_result'
 
 module Egrex
 
@@ -9,7 +10,17 @@ module Egrex
       @where = where
     end
     def match(s)
+      if is_integer(s) && s.length == @example.length
+        MatchResult.new true
+      else
+        MatchResult.new false
+      end
     end
+
+    def is_integer(s)
+      s.to_i.to_s == s
+    end
+
     def compile
       self
     end
