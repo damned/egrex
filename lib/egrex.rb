@@ -16,17 +16,18 @@ module Egrex
       matched = @example.chars.all? { |example_char|
         char = remaining_chars?(chars) ? chars.peek : ''
         specifier = @where[example_char]
-        if example_char == '-'
-          char_matches = char == '-'
-        elsif specifier
+        if specifier
           if specifier.is_a? Set
             char_matches = @where[example_char].include?(char)
+          elsif specifier == :optional
+            char_matches = char_matches?(char, example_char)
           else
             raise "don't know what this where specifier is: '#{specifier}''"
           end
         else
-          char_matches = is_integer(char)
+          char_matches = char_matches?(char, example_char)
         end
+
         if char_matches
           chars.next
         elsif did_not_match_but_was_optional(example_char)
@@ -36,6 +37,15 @@ module Egrex
       }
       return result(false) if remaining_chars?(chars)
       result(matched, [s])
+    end
+
+    def char_matches?(char, example_char)
+      if example_char == '-'
+        char_matches = char == '-'
+      else
+        char_matches = is_integer(char)
+      end
+      char_matches
     end
 
     def remaining_chars?(chars_enum)

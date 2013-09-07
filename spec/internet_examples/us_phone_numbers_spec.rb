@@ -8,10 +8,6 @@ describe 'examples of interesting or complex regexes from the internet' do
     describe 'US phone number parsing' do
 
       shared_examples :us_phone_number_matcher do |matcher|
-
-      end
-
-      shared_examples :us_phone_number_matcher_not_yet_in_egrex do |matcher|
         it 'should match with leading 1 separated by hyphens' do
           matcher.match('1-123-555-6789')[0].should eq '1-123-555-6789'
         end
@@ -19,6 +15,9 @@ describe 'examples of interesting or complex regexes from the internet' do
         it 'should match with leading 1 separated by spaces' do
           matcher.match('1 123 555 6789')[0].should eq '1 123 555 6789'
         end
+      end
+
+      shared_examples :us_phone_number_matcher_not_yet_in_egrex do |matcher|
 
         it 'should match space delimited without leading 1' do
           matcher.match('123 555 6789')[0].should eq '123 555 6789'
