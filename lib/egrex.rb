@@ -25,8 +25,30 @@ module Egrex
     end
   end
 
+  class ExamplePart < Part
+    def initialize(str = '', specifier = nil)
+      super(str)
+      @specifier = specifier
+    end
+    def matches?(part)
+      if @specifier
+        if @specifier.is_a? Set
+          part.is_in? @specifier
+        elsif optional?
+          super part
+        else
+          raise "don't know what this where specifier is: '#{@specifier}''"
+        end
+      else
+        super part
+      end
+    end
+    def optional?
+      @specifier == :optional
+    end
+  end
   class Parts
-    def initialize(str)
+    def initialize(str, where = {})
       @str = str
       @parts = str.chars.collect {|c| Part.new c}
       @next_index = 0
@@ -38,10 +60,14 @@ module Egrex
       @parts
     end
     def peek
-      @parts[@next_index]
+      return @parts[@next_index] if any_left?
+      Part.new
     end
     def any_left?
-      !peek.nil?
+      @next_index < size
+    end
+    def remainder
+      any_left? ? @parts.slice(@next_index..-1).join : ''
     end
     def next
       @next_index += 1
@@ -49,8 +75,16 @@ module Egrex
     end
   end
 
+  class ExampleParts < Parts
+    def initialize(str, where = {})
+      super(str)
+      @parts = str.chars.collect {|c| ExamplePart.new(c, where[c])}
+      @where = where
+    end
+  end
+
   class Where
-    def initialize(specifier_hash)
+    def initialize(specifier_hash = {})
       @hash = specifier_hash
     end
     def [](part_key)
@@ -61,45 +95,34 @@ module Egrex
   class Example
     include Log
     def initialize(example, where)
-      @example = Parts.new(example)
       @where = Where.new(where)
+      @example = ExampleParts.new(example, where)
     end
     def match(s)
-      return result(false) if s.size > @example.size
       parts = Parts.new(s)
 
       matched = @example.parts.all? { |example_part|
-        part = parts.any_left? ? parts.peek : Part.new
-        specifier = @where[example_part]
-        if specifier
-          if specifier.is_a? Set
-            part_matches = part.is_in? specifier
-          elsif specifier == :optional
-            part_matches = example_part.matches? part
-          else
-            raise "don't know what this where specifier is: '#{specifier}''"
-          end
-        else
-          part_matches = example_part.matches? part
-        end
+        part = parts.peek
 
-        if part_matches
+        if example_part.matches?(part)
           parts.next
-        elsif did_not_match_but_was_optional(example_part)
-          part_matches = true
+        else
+          example_part.optional?
         end
-        part_matches
       }
-      return result(false) if parts.any_left?
-      result(matched, [s])
-    end
-
-    def did_not_match_but_was_optional(example_part)
-      @where[example_part] == :optional
+      if parts.any_left?
+        MatchFailed.new "Whole string not matched: '#{parts.remainder}' still left"
+      else
+        result(matched, [s])
+      end
     end
 
     def result(matched, parts = [])
-      MatchResult.new matched, parts
+      if matched
+        Matched.new parts
+      else
+        MatchFailed.new
+      end
     end
 
     def compile

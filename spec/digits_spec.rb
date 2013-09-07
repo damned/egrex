@@ -34,7 +34,9 @@ describe 'digit matching' do
     end
 
     it 'should not match 4 digits' do
-      eg('123').match('9876').ok.should be_false
+      result = eg('123').match('9876')
+      result.ok.should be_false
+      result.description.should start_with('Whole string not matched')
     end
 
     it 'should allow zero padding' do
