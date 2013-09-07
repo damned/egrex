@@ -15,8 +15,15 @@ module Egrex
 
       matched = @example.chars.all? { |example_char|
         char = remaining_chars?(chars) ? chars.peek : ''
+        specifier = @where[example_char]
         if example_char == '-'
           char_matches = char == '-'
+        elsif specifier
+          if specifier.is_a? Set
+            char_matches = @where[example_char].include?(char)
+          else
+            raise "don't know what this where specifier is: '#{specifier}''"
+          end
         else
           char_matches = is_integer(char)
         end
@@ -75,7 +82,12 @@ module Egrex
     May.new
   end
 
-  def one_of(chars)
+  def one_of(*chars)
+    if chars.size == 1
+      Set.new(chars[0].chars)
+    else
+      Set.new(chars)
+    end
   end
 
   def eg(example, where = {})
