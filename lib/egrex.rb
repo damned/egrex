@@ -18,7 +18,8 @@ module Egrex
     end
 
     def is_integer(s)
-      s.to_i.to_s == s
+      unpadded = s.gsub(/^0+/, '')
+      s.to_i.to_s == unpadded
     end
 
     def compile
