@@ -32,15 +32,15 @@ describe 'examples of interesting, useful or complex regexes from the internet' 
           matcher.match('123-45-6789XX').should be_nil
         end
 
-        it 'should not match if any trailing non-digits' do
-          matcher.match('123-45-6789XX').should be_nil
-        end
       end
 
       shared_examples :us_ssn_matcher do |matcher|
-        # todo in progress
         it 'should match with hyphens in there' do
           matcher.match('111-22-4445')[0].should eq '111-22-4445'
+        end
+
+        it 'should not match if any trailing non-digits' do
+          matcher.match('123-45-6789XX').should be_nil
         end
       end
 

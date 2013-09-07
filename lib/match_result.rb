@@ -12,5 +12,9 @@ module Egrex
     def [](index)
       @parts[index]
     end
+
+    def nil?
+      true
+    end
   end
 end
