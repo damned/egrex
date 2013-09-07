@@ -1,11 +1,11 @@
 require_relative '../lib/egrex'
 
-describe 'number matching' do
+describe 'digit matching' do
 
   include Egrex
 
   describe '1 digit example' do
-    it 'should match a number' do
+    it 'should match a digit' do
       eg('1').match('9').ok.should be_true
     end
 

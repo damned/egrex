@@ -39,7 +39,7 @@ describe 'examples of interesting, useful or complex regexes from the internet' 
 
       shared_examples :us_ssn_matcher do |matcher|
         # todo in progress
-        xit 'should match with hyphens in there' do
+        it 'should match with hyphens in there' do
           matcher.match('111-22-4445')[0].should eq '111-22-4445'
         end
       end

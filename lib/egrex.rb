@@ -10,20 +10,25 @@ module Egrex
       @where = where
     end
     def match(s)
-      if @example == '-'
-        result s == '-'
-      else
-        result(is_integer(s) && s.length == @example.length)
-      end
+      return result(false) if s.size != @example.size
+      chars = s.chars
+
+      result @example.chars.all? { |example_char|
+        char = chars.next
+        if example_char == '-'
+          char == '-'
+        else
+          is_integer(char)
+        end
+      }, [s]
     end
 
-    def result(matched)
-      MatchResult.new matched
+    def result(matched, parts = [])
+      MatchResult.new matched, parts
     end
 
     def is_integer(s)
-      unpadded = s.gsub(/^0+/, '')
-      s.to_i.to_s == unpadded
+      s.to_i.to_s == s
     end
 
     def compile
