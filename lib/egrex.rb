@@ -10,11 +10,15 @@ module Egrex
       @where = where
     end
     def match(s)
-      if is_integer(s) && s.length == @example.length
-        MatchResult.new true
+      if @example == '-'
+        result s == '-'
       else
-        MatchResult.new false
+        result(is_integer(s) && s.length == @example.length)
       end
+    end
+
+    def result(matched)
+      MatchResult.new matched
     end
 
     def is_integer(s)
