@@ -3,6 +3,18 @@ require_relative 'match_result'
 
 module Egrex
 
+  class Part
+    def initialize(str)
+      @str = str
+    end
+    def matches?(str)
+      @str == str
+    end
+    def to_s
+      @str
+    end
+  end
+
   class Parts
     def initialize(str)
       @str = str
@@ -10,8 +22,8 @@ module Egrex
     def size
       @str.size
     end
-    def chars
-      @str.chars
+    def parts
+      @str.chars.collect {|c| Part.new c}
     end
   end
 
@@ -25,24 +37,24 @@ module Egrex
       return result(false) if s.size > @example.size
       chars = s.chars
 
-      matched = @example.chars.all? { |example_char|
+      matched = @example.parts.all? { |example_part|
         char = remaining_chars?(chars) ? chars.peek : ''
-        specifier = @where[example_char]
+        specifier = @where[example_part.to_s]
         if specifier
           if specifier.is_a? Set
-            char_matches = @where[example_char].include?(char)
+            char_matches = specifier.include?(char)
           elsif specifier == :optional
-            char_matches = char_matches?(char, example_char)
+            char_matches = part_matches?(char, example_part)
           else
             raise "don't know what this where specifier is: '#{specifier}''"
           end
         else
-          char_matches = char_matches?(char, example_char)
+          char_matches = part_matches?(char, example_part)
         end
 
         if char_matches
           chars.next
-        elsif did_not_match_but_was_optional(example_char)
+        elsif did_not_match_but_was_optional(example_part)
           char_matches = true
         end
         char_matches
@@ -51,13 +63,13 @@ module Egrex
       result(matched, [s])
     end
 
-    def char_matches?(char, example_char)
-      if example_char == '-'
-        char_matches = char == '-'
+    def part_matches?(char, example_part)
+      if example_part.matches? '-'
+        part_matches = char == '-'
       else
-        char_matches = is_integer(char)
+        part_matches = is_integer(char)
       end
-      char_matches
+      part_matches
     end
 
     def remaining_chars?(chars_enum)
@@ -69,8 +81,8 @@ module Egrex
       end
     end
 
-    def did_not_match_but_was_optional(example_char)
-      @where[example_char] == :optional
+    def did_not_match_but_was_optional(example_part)
+      @where[example_part.to_s] == :optional
     end
 
     def result(matched, parts = [])
