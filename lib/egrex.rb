@@ -7,8 +7,12 @@ module Egrex
     def initialize(str = '')
       @str = str
     end
-    def matches?(str)
-      @str == str
+    def matches?(other)
+      if integer?
+        other.integer?
+      else
+        @str == other.to_s
+      end
     end
     def integer?
       @str.to_i.to_s == @str
@@ -16,7 +20,6 @@ module Egrex
     def to_s
       @str
     end
-
     def is_in?(set)
       set.include? @str
     end
@@ -63,12 +66,12 @@ module Egrex
           if specifier.is_a? Set
             part_matches = part.is_in? specifier
           elsif specifier == :optional
-            part_matches = part_matches?(part, example_part)
+            part_matches = example_part.matches? part
           else
             raise "don't know what this where specifier is: '#{specifier}''"
           end
         else
-          part_matches = part_matches?(part, example_part)
+          part_matches = example_part.matches? part
         end
 
         if part_matches
@@ -80,15 +83,6 @@ module Egrex
       }
       return result(false) if parts.any_left?
       result(matched, [s])
-    end
-
-    def part_matches?(char, example_part)
-      if example_part.matches? '-'
-        part_matches = char.matches? '-'
-      else
-        part_matches = char.integer?
-      end
-      part_matches
     end
 
     def did_not_match_but_was_optional(example_part)
