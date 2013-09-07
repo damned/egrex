@@ -49,11 +49,20 @@ module Egrex
     end
   end
 
+  class Where
+    def initialize(specifier_hash)
+      @hash = specifier_hash
+    end
+    def [](part_key)
+      @hash[part_key.to_s]
+    end
+  end
+
   class Example
     include Log
     def initialize(example, where)
       @example = Parts.new(example)
-      @where = where
+      @where = Where.new(where)
     end
     def match(s)
       return result(false) if s.size > @example.size
@@ -61,7 +70,7 @@ module Egrex
 
       matched = @example.parts.all? { |example_part|
         part = parts.any_left? ? parts.peek : Part.new
-        specifier = @where[example_part.to_s]
+        specifier = @where[example_part]
         if specifier
           if specifier.is_a? Set
             part_matches = part.is_in? specifier
@@ -86,7 +95,7 @@ module Egrex
     end
 
     def did_not_match_but_was_optional(example_part)
-      @where[example_part.to_s] == :optional
+      @where[example_part] == :optional
     end
 
     def result(matched, parts = [])
