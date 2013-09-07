@@ -10,17 +10,38 @@ module Egrex
       @where = where
     end
     def match(s)
-      return result(false) if s.size != @example.size
+      return result(false) if s.size > @example.size
       chars = s.chars
 
-      result @example.chars.all? { |example_char|
-        char = chars.next
+      matched = @example.chars.all? { |example_char|
+        char = remaining_chars?(chars) ? chars.peek : ''
         if example_char == '-'
-          char == '-'
+          char_matches = char == '-'
         else
-          is_integer(char)
+          char_matches = is_integer(char)
         end
-      }, [s]
+        if char_matches
+          chars.next
+        elsif did_not_match_but_was_optional(example_char)
+          char_matches = true
+        end
+        char_matches
+      }
+      return result(false) if remaining_chars?(chars)
+      result(matched, [s])
+    end
+
+    def remaining_chars?(chars_enum)
+      begin
+        chars_enum.peek
+        true
+      rescue StopIteration
+        false
+      end
+    end
+
+    def did_not_match_but_was_optional(example_char)
+      @where[example_char] == :optional
     end
 
     def result(matched, parts = [])
