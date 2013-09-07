@@ -3,10 +3,22 @@ require_relative 'match_result'
 
 module Egrex
 
+  class Parts
+    def initialize(str)
+      @str = str
+    end
+    def size
+      @str.size
+    end
+    def chars
+      @str.chars
+    end
+  end
+
   class Example
     include Log
     def initialize(example, where)
-      @example = example
+      @example = Parts.new(example)
       @where = where
     end
     def match(s)
