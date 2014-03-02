@@ -13,7 +13,7 @@ end
 
 task :isolate_installed do
   if isolate_installed?() then
-    run 'gem install isolate', 'isolate not present, installing...'
+    run 'gem install --user isolate', 'isolate not present, installing...'
     rerun 'running rake again, now with isolate...'
   end
 end
