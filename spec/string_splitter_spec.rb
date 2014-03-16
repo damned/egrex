@@ -1,6 +1,7 @@
 require 'rspec'
 require_relative '../lib/string_splitter'
 
+# todo remove StringSplitter
 describe StringSplitter do
 
   it 'should split string at token, including the token' do

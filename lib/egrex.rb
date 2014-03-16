@@ -1,5 +1,6 @@
 require_relative 'log'
 require_relative 'match_result'
+require_relative 'where'
 
 module Egrex
 
@@ -7,6 +8,8 @@ module Egrex
     def initialize(str = '')
       @str = str
     end
+
+    # todo this behaviour is default matching behaviour
     def matches?(other)
       if integer?
         other.integer?
@@ -36,6 +39,8 @@ module Egrex
           part.is_in? @specifier
         elsif optional?
           super part
+        elsif @specifier.is_a? Specifier
+          @specifier.matches? part
         else
           raise "don't know what this where specifier is: '#{@specifier}''"
         end
@@ -48,7 +53,7 @@ module Egrex
     end
   end
   class Parts
-    def initialize(str, where = {})
+    def initialize(str)
       @str = str
       @parts = str.chars.collect {|c| Part.new c}
       @next_index = 0
@@ -76,19 +81,10 @@ module Egrex
   end
 
   class ExampleParts < Parts
-    def initialize(str, where = {})
+    def initialize(str, where = Where.new)
       super(str)
-      @parts = str.chars.collect {|c| ExamplePart.new(c, where[c])}
+      @parts = where.split(str).collect {|token| ExamplePart.new(token, where[token])}
       @where = where
-    end
-  end
-
-  class Where
-    def initialize(specifier_hash = {})
-      @hash = specifier_hash
-    end
-    def [](part_key)
-      @hash[part_key.to_s]
     end
   end
 
@@ -96,7 +92,7 @@ module Egrex
     include Log
     def initialize(example, where)
       @where = Where.new(where)
-      @example = ExampleParts.new(example, where)
+      @example = ExampleParts.new(example, @where)
     end
     def match(s)
       parts = Parts.new(s)
@@ -134,9 +130,17 @@ module Egrex
     end
   end
 
-  class May
+  class Specifier
+
+  end
+
+  class May < Specifier
     def be(specifier)
       self
+      @specifier = specifier
+    end
+    def matches?(part)
+      part == @specifier
     end
   end
 
