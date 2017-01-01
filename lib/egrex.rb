@@ -1,6 +1,7 @@
 require_relative 'log'
 require_relative 'match_result'
 require_relative 'where'
+require_relative 'may'
 
 module Egrex
 
@@ -21,7 +22,7 @@ module Egrex
       @str.to_i.to_s == @str
     end
     def to_s
-      @str
+      self.class.to_s + ': ' + @str
     end
     def is_in?(set)
       set.include? @str
@@ -42,7 +43,7 @@ module Egrex
         elsif @specifier.is_a? Specifier
           @specifier.matches? part
         else
-          raise "don't know what this where specifier is: '#{@specifier}''"
+          raise "don't know what this where specifier is: '#{@specifier}' (type: #{@specifier.class})"
         end
       else
         super part
@@ -52,6 +53,7 @@ module Egrex
       @specifier == :optional
     end
   end
+
   class Parts
     def initialize(str)
       @str = str
@@ -83,7 +85,9 @@ module Egrex
   class ExampleParts < Parts
     def initialize(str, where = Where.new)
       super(str)
-      @parts = where.split(str).collect {|token| ExamplePart.new(token, where[token])}
+      @parts = where.split(str).collect {|token|
+        ExamplePart.new(token, where[token])
+      }
       @where = where
     end
   end
@@ -98,6 +102,7 @@ module Egrex
       parts = Parts.new(s)
 
       matched = @example.parts.all? { |example_part|
+        log "part: #{example_part}"
         part = parts.peek
 
         if example_part.matches?(part)
@@ -127,20 +132,6 @@ module Egrex
     def show
       log 'nothing here...show not implemented yet in new egrex'
       self
-    end
-  end
-
-  class Specifier
-
-  end
-
-  class May < Specifier
-    def be(specifier)
-      self
-      @specifier = specifier
-    end
-    def matches?(part)
-      part == @specifier
     end
   end
 

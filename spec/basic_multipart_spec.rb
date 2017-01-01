@@ -31,6 +31,23 @@ describe 'basic multipart matching' do
         eg('123-456-7890').match('783-858-9001').ok.should be_true
       end
     end
+
+    describe 'may-be alternative' do
+      context 'a simple example' do
+        let(:egrex) { eg('123', '123' => may.be('-123-'))}
+        it 'should match the example form' do
+          expect(egrex.match('891').ok).to be_true
+        end
+
+        it 'should not match something between the alternatives' do
+
+        end
+
+        it 'should match the alternative form' do
+
+        end
+      end
+    end
   end
 
 end
